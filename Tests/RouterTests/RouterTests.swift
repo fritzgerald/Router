@@ -21,8 +21,30 @@ final class RouterTests: XCTestCase {
         XCTAssertEqual(try router.route("/toto"), 20)
         XCTAssertNil(try router.route("/1234"))
     }
+    
+    func testSubtitutionsPatterns() {
+        let router = Router<(Int, Int) -> Int>()
+        try! router.addRoute(path: "add(<int:lhs>, <int:rhs>)") { (lhs, rhs) -> Int in
+            lhs + rhs
+        }
+        try! router.addRoute(path: "sub(<int:lhs>, <int:rhs>)") { (lhs, rhs) -> Int in
+            lhs - rhs
+        }
+        
+        let invoker: ([String: Any], (Int, Int) -> Int) throws -> Int = { (parameters, route) in
+            guard let lhs = parameters["lhs"] as? Int,
+                let rhs = parameters["rhs"] as? Int
+                else { throw RouterError.invalidPath }
+            return route(lhs, rhs)
+        }
+        
+        XCTAssertEqual(try router.invoke("add(2, 3)", transform: invoker), 5)
+        XCTAssertEqual(try router.invoke("add(-2, 3)", transform: invoker),
+                       try router.invoke("sub(3, 2)", transform: invoker))
+    }
 
     static var allTests = [
-        ("testExample", testSimpleRoutes),
+        ("testSimpleRoutes", testSimpleRoutes),
+        ("testSubtitutionsPatterns", testSubtitutionsPatterns)
     ]
 }
