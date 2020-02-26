@@ -20,7 +20,7 @@ struct Route<Output> {
     var parameters: [String: URLConverter]
 }
 
-public class Router<Output> {
+public final class Router<Output> {
     private var routes: [Route<Output>] = []
     private var converters: [String: URLConverter] = [:]
     
