@@ -112,7 +112,8 @@ fileprivate enum RouterConstants {
 }
 
 private extension Router {
-    func createRoute(name: String?, path: String, output: Output) throws -> Route<Output> {
+    func createRoute(name: String?, path sourcePath: String, output: Output) throws -> Route<Output> {
+        let path = NSRegularExpression.escapedPattern(for: sourcePath)
         guard !path.isEmpty else { throw RouterError.invalidPath }
         
         let matches = RouterConstants.substitutionRegex.matches(in: path,
