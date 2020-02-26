@@ -100,6 +100,13 @@ public final class Router<Output> {
                 return outputString
         }.first
     }
+    
+    func invoke<T>(_ path: String, transform: ([String: Any], Output) throws -> T) throws -> T? {
+        var parameters: [String: Any] = [:]
+        guard let matchRoute = try route(path, parameters: &parameters)
+            else { return nil }
+        return try transform(parameters, matchRoute)
+    }
 }
 
 public enum RouterError: Swift.Error {
