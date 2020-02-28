@@ -13,9 +13,8 @@ let package = Package(
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
-        .library(
-            name: "Router",
-            targets: ["Router"]),
+        .library(name: "Router", targets: ["Router"]),
+        .library(name: "URLRequestRouter", targets: ["URLRequestRouter"])
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -24,11 +23,9 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages which this package depends on.
-        .target(
-            name: "Router",
-            dependencies: []),
-        .testTarget(
-            name: "RouterTests",
-            dependencies: ["Router"]),
+        .target(name: "Router", dependencies: []),
+        .testTarget(name: "RouterTests", dependencies: ["Router"]),
+        .target(name: "URLRequestRouter", dependencies: ["Router"]),
+        .testTarget(name: "URLRequestRouterTests", dependencies: ["URLRequestRouter"])
     ]
 )
