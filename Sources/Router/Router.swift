@@ -24,28 +24,28 @@ public final class Router<Output> {
     private var routes: [Route<Output>] = []
     private var converters: [String: URLConverter] = [:]
     
-    init() {
+    public init() {
         converters["int"] = IntConverter()
         converters["date"] = DateConverter.yearMonthDayGMT
         converters["str"] = StringConverter()
         converters["uuid"] = UUIDConverter()
     }
     
-    func addRoute(name: String? = nil, path: String, output: Output) throws {
+    public func addRoute(name: String? = nil, path: String, output: Output) throws {
         try routes.append(createRoute(name: name, path: path, output: output))
     }
     
-    func addRoutes(name: String? = nil, paths: [String], output: Output) throws {
+    public func addRoutes(name: String? = nil, paths: [String], output: Output) throws {
         try routes.append(contentsOf: paths.map({ try createRoute(name: name, path: $0, output: output) }))
     }
     
-    func route(_ path: String) throws -> Output? {
+    public func route(_ path: String) throws -> Output? {
         var params: [String: Any] = [:]
         let output = try route(path, parameters: &params)
         return output
     }
     
-    func route(_ path: String, parameters: inout [String: Any]) throws -> Output? {
+    public func route(_ path: String, parameters: inout [String: Any]) throws -> Output? {
         let result = routes.compactMap { route -> (NSTextCheckingResult, Route<Output>)? in
             guard
                 let regex = try? NSRegularExpression(pattern: route.pattern, options: [.caseInsensitive]),
@@ -63,7 +63,7 @@ public final class Router<Output> {
         return route.output
     }
     
-    func path(name: String, parameters: [String: Any] = [:]) -> String? {
+    public func path(name: String, parameters: [String: Any] = [:]) -> String? {
         routes
             .filter { $0.name == name }
             .compactMap { route -> String? in
@@ -87,7 +87,7 @@ public final class Router<Output> {
         }.first
     }
     
-    func invoke<T>(_ path: String, transform: ([String: Any], Output) throws -> T) throws -> T? {
+    public func invoke<T>(_ path: String, transform: ([String: Any], Output) throws -> T) throws -> T? {
         var parameters: [String: Any] = [:]
         guard let matchRoute = try route(path, parameters: &parameters)
             else { return nil }
